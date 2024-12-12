@@ -84,7 +84,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
       icon:  <FaUsers />,
       title: 'User Management',
       subMenus: [
-        { title: 'All Users', path: '/create-a-vocabulary' },
+        { title: 'All Users', path: '/dashboard/all-users' },
         
       ],
     },

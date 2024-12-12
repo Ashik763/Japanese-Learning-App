@@ -1,6 +1,3 @@
-
-
-
 const express = require("express");
 const cors = require("cors");
 const jwt = require("jsonwebtoken");
@@ -8,6 +5,9 @@ const bcrypt = require("bcryptjs");
 const { connectToDatabase, getUsersCollection } = require("./db");
 const lessonsRoutes = require("./lessonsRoutes");
 const wordsRoutes = require("./wordsRoutes");
+const usersRoutes = require("./usersRoutes");
+// const verifyToken = require("./middlewares/verifyToken");
+const verifyAdmin = require("./middlewares/verifyAdmin");
 require("dotenv").config();
 
 const app = express();
@@ -23,7 +23,8 @@ connectToDatabase().then(() => {
 
   // Routes
   app.use("/lessons", lessonsRoutes);
-  app.use("/words", wordsRoutes);
+  app.use("/words",verifyAdmin, wordsRoutes);
+  app.use("/users",verifyAdmin, usersRoutes);
 
   app.post("/signup", async (req, res) => {
     try {

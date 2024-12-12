@@ -46,6 +46,7 @@ const ViewAllVocabularies = () => {
     setMeaning(word.meaning||"");
     setWhenToSay(word.whenToSay|| "");
     setLessonNo(word.lessonNo || "3")
+    setIsOpen(true);
   }
 
   function closeModal() {}
@@ -101,7 +102,7 @@ const ViewAllVocabularies = () => {
   };
 
   const handleDelete = (_id) => {
-    fetch(`http://localhost:5000/lessons/delete/${_id}`, {
+    fetch(`http://localhost:5000/words/delete/${_id}`, {
       method: "DELETE",
     })
       .then((res) => res.json())
@@ -296,7 +297,6 @@ const ViewAllVocabularies = () => {
             </div>
           </ReactModal>
 
-<button className="btn" onClick={()=>document.getElementById('my_modal_2').showModal()}>open modal</button>
       <ToastContainer />
     </div>
   );

@@ -23,24 +23,22 @@ router.patch("/update/:id",async (req, res) => {
       const body = req.body
       // const {id} = req.body;
       const {id} = req.params;
-      console.log(id);
-      // console.log(body);
-      const existingLesson = await getLessonsCollection().findOne({ lessonNo:body.lessonNo });
-      if (existingLesson) {
-        return res.status(400).json({ success:false, message: "Lesson Number already exists" });
-      }
+      console.log("Id from word",id);
+      console.log(body);
+   
+     
       const query = { _id: new ObjectId(id) };
-      const result = await getLessonsCollection().updateOne(query, {$set:{lessonName:req.body.lessonName, lessonNo:req.lessonNo}});
-      res.status(201).send({success: true, message: "Lesson Updated Successfully", result:result});
+      const result = await getWordsCollection().updateOne(query, {$set:{...body}});
+      res.status(201).send({success: true, message: "Word Updated Successfully", result:result});
 });
 
 
 router.delete("/delete/:_id", async (req, res) => {
       const {_id} = req.params;
       const query = { _id: new ObjectId(_id) };
-      const result =  await getLessonsCollection().deleteOne(query);
-      const result2 = await getWordsCollection().deleteMany({lessonId:_id});
-      console.log(result, result2);
+      
+      const result = await getWordsCollection().deleteOne(query);
+      console.log(result);
       res.send({success: true, message: "Successfully deleted"});
 });
 

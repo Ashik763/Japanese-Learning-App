@@ -1,16 +1,23 @@
 
-// import { LessonCard } from '@/components/LessonCard'
-// import { JapanesePattern } from '@/components/JapanesePattern'
 import { TorusIcon as Torii } from 'lucide-react'
 import LessonCard  from './LessonCard';
 import { JapanesePattern } from './JapanesePattern';
 import { useEffect, useState } from 'react';
+import Cookies from 'js-cookie';
 
 export default  function AllLessons() {
 
+ 
+
   const [lessons, setLessons] = useState([]);
   useEffect(() => {
-    fetch("http://localhost:5000/lessons/all")
+    fetch("http://localhost:5000/lessons/all", {
+      method: "GET", // Specify the HTTP method if necessary
+      headers: {
+        "Content-Type": "application/json", // Ensure proper content type
+        Authorization: Cookies.get('token') , // Add the token
+      },
+    })
       .then((res) => res.json())
       .then((data) => {
         

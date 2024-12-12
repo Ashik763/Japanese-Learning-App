@@ -1,14 +1,17 @@
 import React, { useContext } from 'react';
 import Navbar from '../Pages/Shared/Navbar/Navbar';
-import { Outlet } from 'react-router-dom';
+import { Navigate, Outlet, useLocation } from 'react-router-dom';
 import Footer from '../Pages/Shared/Footer/Footer';
 import { AuthContext } from '../Contexts/AuthProvider';
 import Spinner from '../Pages/Shared/Spinner/Spinner';
 import "./Main.css"
 
 const Main = () => {
-    const {loading} = useContext(AuthContext);
-
+    const {user, loading} = useContext(AuthContext);
+    const location = useLocation();
+    if(!user){
+         return <Navigate to="/login" state={{from: location}} replace></Navigate>
+    }
     if(loading){
         return <Spinner></Spinner>
     }

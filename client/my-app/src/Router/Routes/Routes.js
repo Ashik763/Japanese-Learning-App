@@ -21,6 +21,7 @@ import AdminAllLessons from "../../Pages/AdminAllLessons/AdminAllLessons";
 import AdminRoute from "../../Components/PrivateRoute/AdminRoute";
 import CreateWord from "../../Pages/CreateWord/CreateWord";
 import ViewAllVocabularies from "../../Pages/ViewAllVocabularies/ViewAllVocabularies";
+import AllUsers from "../../Pages/AllUsers/AllUsers";
 
 export const routes = createBrowserRouter([
   {
@@ -69,6 +70,10 @@ export const routes = createBrowserRouter([
           {
             path: "/dashboard/all-vocabularies",
             element: <ViewAllVocabularies></ViewAllVocabularies> ,
+          },
+          {
+            path: "/dashboard/all-users",
+            element: <AllUsers></AllUsers> ,
           },
           
 

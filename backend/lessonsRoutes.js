@@ -1,12 +1,14 @@
 const express = require("express");
 const router = express.Router();
 const { getLessonsCollection, getWordsCollection } = require("./db");
-const verifyAdmin = require("./middlewares/verifyToken");
+const verifyToken = require("./middlewares/verifyToken");
+const verifyAdmin = require("./middlewares/verifyAdmin");
+
 const { ObjectId } = require("mongodb");
 
 
 
-router.get("/all", async (req, res) => {
+router.get("/all", verifyToken, async (req, res) => {
   try {
    
 
@@ -35,7 +37,7 @@ router.get("/all", async (req, res) => {
 });
 
 
-router.get("/:_id/words", async (req, res) => {
+router.get("/:_id/words",verifyToken, async (req, res) => {
     try {
       const { _id } = req.params;
     //   const wordsCollection = getWordsCollection();
@@ -66,7 +68,7 @@ router.post("/create-a-lesson",verifyAdmin,async (req, res) => {
 });
 
 
-router.patch("/update/:id",async (req, res) => {
+router.patch("/update/:id",verifyAdmin, async (req, res) => {
       const body = req.body
       // const {id} = req.body;
       const {id} = req.params;
@@ -82,7 +84,7 @@ router.patch("/update/:id",async (req, res) => {
 });
 
 
-router.delete("/delete/:_id", async (req, res) => {
+router.delete("/delete/:_id",verifyAdmin, async (req, res) => {
       const {_id} = req.params;
       const query = { _id: new ObjectId(_id) };
       const result =  await getLessonsCollection().deleteOne(query);

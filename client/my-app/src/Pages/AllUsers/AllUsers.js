@@ -5,7 +5,8 @@ import ReactModal from "react-modal";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 // import EditLessonModal from "./EditLessonModal";
-
+import Swal from "sweetalert2";
+// import "./styles.css"; 
 
 
 const customStyles = {
@@ -25,48 +26,60 @@ const customStyles = {
 
 
 
-const AdminAllLessons = () => {
-  const [lessons, setLessons] = useState([]);
+const AllUsers = () => {
+  const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [modalIsOpen, setIsOpen] = useState(false);
   const [lessonName, setLessonName] = useState("");
   const [lessonNumber, setLessonNumber] = useState("");
   const [lessonId, setLessonId] = useState("");
-    
 
-  function openModal(lesson) {
-    console.log(lesson);
-    setLessonName(lesson.name);
-    setLessonNumber(lesson.number);
-    setLessonId(lesson._id);
-    setIsOpen(true);
-  }
+//   const [role, setRole] = useState("");
 
-  function closeModal() {}
-  const handleSubmit = async (e) => {
-    handleUpdate(e);
-    setIsOpen(false);
-    closeModal();
+  const handleChange = (event,user) => {
+    const value = event.target.value;
+    console.log(user);
+    Swal.fire({
+        title: "Are you sure?",
+        text: `Do you want to change your role to "${value}"?`,
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonText: '<span style="color: black;">Yes, change it!</span>',
+      cancelButtonText: '<span style="color: black;">No, keep it</span>',
+      customClass: {
+        confirmButton: "swal-confirm-btn",
+        cancelButton: "swal-cancel-btn",
+      },
+      }).then((result) => {
+        if (result.isConfirmed) {
+         handleUpdate(user,value);
+          
+         
+        } else if (result.dismiss === Swal.DismissReason.cancel) {
+            fetchLessons();
+          Swal.fire("Cancelled", "Your role remains unchanged.", "info");
+        }
+      });
   };
-  const handleUpdate = (e) => {
-    console.log("clicked");
-    console.log(lessonId);
+    
+  const handleUpdate = async(user,value) => {
+  
     fetch(
-      `http://localhost:5000/lessons/update/${lessonId}`,
+      `http://localhost:5000/users/update/${user._id}`,
       {
         method: "PATCH",
         headers: {
           "Content-type": "application/json; charset=UTF-8",
         },
         body: JSON.stringify({
-          lessonName,
-          lessonNo: lessonNumber
+            role: value
         }),
       }
     )
       .then((response) => response.json())
       .then((json) => {
         toast("Successfully Updated");
+        Swal.fire("Updated!", `Your role has been changed to "${value}".`, "success");
         setLoading(true);
         fetchLessons();
       });
@@ -79,10 +92,10 @@ const AdminAllLessons = () => {
 
   const fetchLessons = () => {
     setLoading(true);
-    fetch(`http://localhost:5000/lessons/all`)
+    fetch(`http://localhost:5000/users/all`)
       .then((response) => response.json())
       .then((data) => {
-        setLessons(data);
+        setUsers(data.result);
         setLoading(false);
       })
       .catch((error) => {
@@ -91,46 +104,25 @@ const AdminAllLessons = () => {
       });
   };
 
-  const handleDelete = (_id) => {
-    fetch(`http://localhost:5000/lessons/delete/${_id}`, {
-      method: "DELETE",
-    })
-      .then((res) => res.json())
-      .then(() => {
-        setLoading(true);
-        fetchLessons();
-        toast.success("Lesson successfully deleted");
-      })
-      .catch((error) => {
-        console.error("Error deleting lesson:", error);
-        toast.error("Failed to delete lesson");
-      });
-  };
+//   const handleDelete = (_id) => {
+//     fetch(`http://localhost:5000/lessons/delete/${_id}`, {
+//       method: "DELETE",
+//     })
+//       .then((res) => res.json())
+//       .then(() => {
+//         setLoading(true);
+//         fetchLessons();
+//         toast.success("Lesson successfully deleted");
+//       })
+//       .catch((error) => {
+//         console.error("Error deleting lesson:", error);
+//         toast.error("Failed to delete lesson");
+//       });
+//   };
 
-  function afterOpenModal() {
-    // references are now sync'd and can be accessed.
-    // subtitle.style.color = '#f00';
-  }
+  function afterOpenModal() {}
 
-  // const handleUpdateLesson = (updatedLesson) => {
-  //   fetch(`http://localhost:5000/lessons/${updatedLesson.id}`, {
-  //     method: "PUT",
-  //     headers: {
-  //       "Content-Type": "application/json",
-  //     },
-  //     body: JSON.stringify(updatedLesson),
-  //   })
-  //     .then((res) => res.json())
-  //     .then(() => {
-  //       fetchLessons();
-        
-  //       toast.success("Lesson updated successfully");
-  //     })
-  //     .catch((error) => {
-  //       console.error("Error updating lesson:", error);
-  //       toast.error("Failed to update lesson");
-  //     });
-  // };
+
 
   if (loading) {
     return <div>Loading...</div>;
@@ -142,20 +134,26 @@ const AdminAllLessons = () => {
       <table className=" absolute right-2 top-2 w-full md:w-4/5 border  bg-white">
         <thead>
           <tr>
-            <th className="py-2 px-4 border-b">Lesson Name</th>
-            <th className="py-2 px-4 border-b">Lesson Number</th>
-            <th className="py-2 px-4 border-b">Vocabulary Count</th>
-            <th className="py-2 px-4 border-b">Edit</th>
-            <th className="py-2 px-4 border-b">Delete</th>
+            <th className="py-2 px-4 border-b"> Name</th>
+            <th className="py-2 px-4 border-b"> Email</th>
+            <th className="py-2 px-4 border-b"> Role </th>
           </tr>
         </thead>
         <tbody>
-          {lessons.map((lesson) => (
-            <tr key={lesson.id}>
-              <td className="py-2 px-4 border-b">{lesson.name}</td>
-              <td className="py-2 px-4 border-b">{lesson.number}</td>
-              <td className="py-2 px-4 border-b">{lesson.vocabularyCount}</td>
-              <td className="py-2 px-4 border-b">
+          {users.map((user) => (
+            <tr key={user._id}>
+              <td className="py-2 px-4 border-b text-center">{user.name}</td>
+              <td className="py-2 px-4 border-b text-center">{user.email}</td>
+              <td className="py-2 px-4 border-b text-center">
+                    <select onChange={(e)=>handleChange(e,user) } className="select select-bordered w-1/2  sm:w-full max-w-xs">
+                        <option disabled selected>{user.role}</option>
+                        <option>{user.role === 'admin'?"user":"admin"}</option>
+                    
+                    </select>
+                
+                
+                </td>
+              {/* <td className="py-2 px-4 border-b">
                 <button onClick={() => openModal(lesson)} className="text-blue-500">
                   <CiEdit size={20} />
                 </button>
@@ -164,13 +162,13 @@ const AdminAllLessons = () => {
                 <button onClick={() => handleDelete(lesson._id)} className="text-red-500">
                   <AiOutlineDelete size={20} />
                 </button>
-              </td>
+              </td> */}
             </tr>
           ))}
         </tbody>
       </table>
        {/* Open the modal using document.getElementById('ID').showModal() method */}
-
+{/* 
 <ReactModal
             // className="h-1/2"
             isOpen={modalIsOpen}
@@ -187,7 +185,7 @@ const AdminAllLessons = () => {
               htmlFor="lessonName"
               className="block text-gray-700 font-medium mb-2"
             >
-              Lesson Name
+              User Name
             </label>
             <input
               type="text"
@@ -224,12 +222,12 @@ const AdminAllLessons = () => {
           </button>
         </form>
             </div>
-          </ReactModal>
+          </ReactModal> */}
 
       <ToastContainer />
     </div>
   );
 };
 
-export default AdminAllLessons;
+export default AllUsers ;
 
