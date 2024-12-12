@@ -4,9 +4,8 @@ import { CiEdit } from "react-icons/ci";
 import ReactModal from "react-modal";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-// import EditLessonModal from "./EditLessonModal";
-
-
+import Cookies from "js-cookie";
+import Spinner from "../Shared/Spinner/Spinner";
 
 const customStyles = {
   content: {
@@ -20,11 +19,6 @@ const customStyles = {
   },
 };
 
-
-
-
-
-
 const AdminAllLessons = () => {
   const [lessons, setLessons] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -32,7 +26,6 @@ const AdminAllLessons = () => {
   const [lessonName, setLessonName] = useState("");
   const [lessonNumber, setLessonNumber] = useState("");
   const [lessonId, setLessonId] = useState("");
-    
 
   function openModal(lesson) {
     console.log(lesson);
@@ -51,19 +44,17 @@ const AdminAllLessons = () => {
   const handleUpdate = (e) => {
     console.log("clicked");
     console.log(lessonId);
-    fetch(
-      `http://localhost:5000/lessons/update/${lessonId}`,
-      {
-        method: "PATCH",
-        headers: {
-          "Content-type": "application/json; charset=UTF-8",
-        },
-        body: JSON.stringify({
-          lessonName,
-          lessonNo: lessonNumber
-        }),
-      }
-    )
+    fetch(`http://localhost:5000/lessons/update/${lessonId}`, {
+      method: "PATCH",
+      headers: {
+        "Content-type": "application/json; charset=UTF-8",
+        Authorization: Cookies.get("token"),
+      },
+      body: JSON.stringify({
+        lessonName,
+        lessonNo: lessonNumber,
+      }),
+    })
       .then((response) => response.json())
       .then((json) => {
         toast("Successfully Updated");
@@ -72,14 +63,19 @@ const AdminAllLessons = () => {
       });
   };
 
-
   useEffect(() => {
     fetchLessons();
   }, []);
 
   const fetchLessons = () => {
     setLoading(true);
-    fetch(`http://localhost:5000/lessons/all`)
+    fetch(`http://localhost:5000/lessons/all`,{
+      method:"GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: Cookies.get("token"),
+      },
+    })
       .then((response) => response.json())
       .then((data) => {
         setLessons(data);
@@ -94,6 +90,10 @@ const AdminAllLessons = () => {
   const handleDelete = (_id) => {
     fetch(`http://localhost:5000/lessons/delete/${_id}`, {
       method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: Cookies.get("token"),
+      },
     })
       .then((res) => res.json())
       .then(() => {
@@ -112,28 +112,10 @@ const AdminAllLessons = () => {
     // subtitle.style.color = '#f00';
   }
 
-  // const handleUpdateLesson = (updatedLesson) => {
-  //   fetch(`http://localhost:5000/lessons/${updatedLesson.id}`, {
-  //     method: "PUT",
-  //     headers: {
-  //       "Content-Type": "application/json",
-  //     },
-  //     body: JSON.stringify(updatedLesson),
-  //   })
-  //     .then((res) => res.json())
-  //     .then(() => {
-  //       fetchLessons();
-        
-  //       toast.success("Lesson updated successfully");
-  //     })
-  //     .catch((error) => {
-  //       console.error("Error updating lesson:", error);
-  //       toast.error("Failed to update lesson");
-  //     });
-  // };
 
+  console.log(lessons);
   if (loading) {
-    return <div>Loading...</div>;
+    return <Spinner></Spinner>;
   }
 
   return (
@@ -151,17 +133,23 @@ const AdminAllLessons = () => {
         </thead>
         <tbody>
           {lessons.map((lesson) => (
-            <tr key={lesson.id}>
-              <td className="py-2 px-4 border-b">{lesson.name}</td>
-              <td className="py-2 px-4 border-b">{lesson.number}</td>
-              <td className="py-2 px-4 border-b">{lesson.vocabularyCount}</td>
-              <td className="py-2 px-4 border-b">
-                <button onClick={() => openModal(lesson)} className="text-blue-500">
+            <tr key={lesson._id}>
+              <td className="py-2 px-4 border-b text-center">{lesson.name}</td>
+              <td className="py-2 px-4 border-b text-center">{lesson.number}</td>
+              <td className="py-2 px-4 border-b text-center">{lesson.vocabularyCount}</td>
+              <td className="py-2 px-4 border-b text-center">
+                <button
+                  onClick={() => openModal(lesson)}
+                  className="text-blue-500 text-center"
+                >
                   <CiEdit size={20} />
                 </button>
               </td>
               <td className="py-2 px-4 border-b">
-                <button onClick={() => handleDelete(lesson._id)} className="text-red-500">
+                <button
+                  onClick={() => handleDelete(lesson._id)}
+                  className="text-red-500 text-center"
+                >
                   <AiOutlineDelete size={20} />
                 </button>
               </td>
@@ -169,62 +157,62 @@ const AdminAllLessons = () => {
           ))}
         </tbody>
       </table>
-       {/* Open the modal using document.getElementById('ID').showModal() method */}
+      {/* Open the modal using document.getElementById('ID').showModal() method */}
 
-<ReactModal
-            // className="h-1/2"
-            isOpen={modalIsOpen}
-            onAfterOpen={afterOpenModal}
-            onRequestClose={closeModal}
-            style={customStyles}
-            contentLabel="Example Modal"
-          >
-            <div className="text-center  h-80 w-80">
-              <div className=" text-2xl  text-primary ">Edit</div>
-              <form onSubmit={handleSubmit}>
-          <div className="mb-4">
-            <label
-              htmlFor="lessonName"
-              className="block text-gray-700 font-medium mb-2"
-            >
-              Lesson Name
-            </label>
-            <input
-              type="text"
-              id="lessonName"
-              value={lessonName}
-              onChange={(e) => setLessonName(e.target.value)}
-              placeholder="e.g., Basic Greetings"
-              className="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
-            />
-          </div>
-
-          <div className="mb-4">
-            <label
-              htmlFor="lessonNumber"
-              className="block text-gray-700 font-medium mb-2"
-            >
-              Lesson Number
-            </label>
-            <input
-              type="number"
-              id="lessonNumber"
-              value={lessonNumber}
-              onChange={(e) => setLessonNumber(e.target.value)}
-              placeholder="e.g., 1"
-              className="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
-            />
-          </div>
-
-          <button
-            type="submit"
-            className="w-full bg-blue-500 text-white font-medium py-2 rounded-md shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400"
-          >
-            Update Lesson
-          </button>
-        </form>
+      <ReactModal
+        // className="h-1/2"
+        isOpen={modalIsOpen}
+        onAfterOpen={afterOpenModal}
+        onRequestClose={closeModal}
+        style={customStyles}
+        contentLabel="Example Modal"
+      >
+        <div className="text-center  h-80 w-80">
+          <div className=" text-2xl  text-primary ">Edit</div>
+          <form onSubmit={handleSubmit}>
+            <div className="mb-4">
+              <label
+                htmlFor="lessonName"
+                className="block text-gray-700 font-medium mb-2"
+              >
+                Lesson Name
+              </label>
+              <input
+                type="text"
+                id="lessonName"
+                value={lessonName}
+                onChange={(e) => setLessonName(e.target.value)}
+                placeholder="e.g., Basic Greetings"
+                className="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
+              />
             </div>
-          </ReactModal>
+
+            <div className="mb-4">
+              <label
+                htmlFor="lessonNumber"
+                className="block text-gray-700 font-medium mb-2"
+              >
+                Lesson Number
+              </label>
+              <input
+                type="number"
+                id="lessonNumber"
+                value={lessonNumber}
+                onChange={(e) => setLessonNumber(e.target.value)}
+                placeholder="e.g., 1"
+                className="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
+              />
+            </div>
+
+            <button
+              type="submit"
+              className="w-full bg-blue-500 text-white font-medium py-2 rounded-md shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400"
+            >
+              Update Lesson
+            </button>
+          </form>
+        </div>
+      </ReactModal>
 
       <ToastContainer />
     </div>
@@ -232,4 +220,3 @@ const AdminAllLessons = () => {
 };
 
 export default AdminAllLessons;
-

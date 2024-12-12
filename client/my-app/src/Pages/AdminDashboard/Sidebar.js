@@ -7,7 +7,7 @@ const MenuItem = ({ icon, title, subMenus, isOpen, toggleOpen }) => {
   return (
     <div className="mb-2">
       <motion.button
-        className="flex items-center w-full p-3 text-white hover:bg-sky-600 rounded-lg transition-colors duration-200"
+        className="flex items-center w-full p-3  hover:bg-sky-600 rounded-lg transition-colors duration-200"
         onClick={toggleOpen}
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
@@ -41,7 +41,7 @@ const MenuItem = ({ icon, title, subMenus, isOpen, toggleOpen }) => {
               >
                 <Link
                   to={subMenu.path}
-                  className="block p-2 text-sm text-sky-200 hover:text-white hover:bg-sky-600 rounded-md transition-colors duration-200"
+                  className="block p-2 text-sm   hover:bg-sky-600 rounded-md transition-colors duration-200"
                 >
                   {subMenu.title}
                 </Link>
@@ -97,7 +97,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
 
   return (
     <motion.div
-      className="bg-gradient-to-r from-sky-500 to-sky-50 text-white w-64 min-h-screen fixed left-0 top-0 z-30 shadow-lg"
+      className="bg-gradient-to-r from-sky-500 to-sky-50  w-64 min-h-screen fixed left-0 top-0 z-30 shadow-lg"
       initial={{ x: '-100%' }}
       animate={{ x: isOpen ? 0 : '-100%' }}
       transition={{ duration: 0.3, ease: 'easeInOut' }}
@@ -113,7 +113,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
         </motion.h1>
         <button
           onClick={toggleSidebar}
-          className="absolute top-4 right-4 text-white lg:hidden"
+          className="absolute top-4 right-4 lg:hidden"
         >
           <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />

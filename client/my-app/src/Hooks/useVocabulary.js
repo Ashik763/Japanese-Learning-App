@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-
+import Cookies from 'js-cookie'
 
 
 export function useVocabulary(lessonNo) {
@@ -9,7 +9,13 @@ export function useVocabulary(lessonNo) {
 
   useEffect(() => {
     setIsLoading(true)
-    fetch(`http://localhost:5000/lessons/${lessonNo}/words`)
+    fetch(`http://localhost:5000/lessons/${lessonNo}/words`,{
+          method: "GET", 
+          headers: {
+            "Content-Type": "application/json", 
+            Authorization: Cookies.get('token') ,
+          },
+        })
       .then((res) => {
         if (!res.ok) throw new Error('Failed to fetch vocabulary')
         return res.json()

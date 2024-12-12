@@ -13,7 +13,7 @@ const Dashboard = () => {
     <div className="flex h-screen bg-gray-100">
       <Sidebar isOpen={sidebarOpen} toggleSidebar={toggleSidebar} />
       <div className="  flex-1 flex flex-col overflow-hidden">
-        <header className=" shadow-md">
+        {/* <header className=" shadow-md">
           <div className="  flex items-center justify-between p-4">
             <button
               onClick={toggleSidebar}
@@ -31,7 +31,7 @@ const Dashboard = () => {
               />
             </div>
           </div>
-        </header>
+        </header> */}
         <main className="flex-1 overflow-x-hidden overflow-y-auto bg-gray-200">
                 <Outlet></Outlet>
         </main>

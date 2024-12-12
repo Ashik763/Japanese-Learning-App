@@ -1,13 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { AiOutlineDelete } from "react-icons/ai";
-import { CiEdit } from "react-icons/ci";
-import ReactModal from "react-modal";
+import Cookies from 'js-cookie'
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-// import EditLessonModal from "./EditLessonModal";
 import Swal from "sweetalert2";
-// import "./styles.css"; 
-
+import Spinner from "../Shared/Spinner/Spinner";
 
 const customStyles = {
   content: {
@@ -22,19 +18,10 @@ const customStyles = {
 };
 
 
-
-
-
-
 const AllUsers = () => {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [modalIsOpen, setIsOpen] = useState(false);
-  const [lessonName, setLessonName] = useState("");
-  const [lessonNumber, setLessonNumber] = useState("");
-  const [lessonId, setLessonId] = useState("");
 
-//   const [role, setRole] = useState("");
 
   const handleChange = (event,user) => {
     const value = event.target.value;
@@ -70,6 +57,7 @@ const AllUsers = () => {
         method: "PATCH",
         headers: {
           "Content-type": "application/json; charset=UTF-8",
+          Authorization: Cookies.get('token') ,
         },
         body: JSON.stringify({
             role: value
@@ -92,7 +80,13 @@ const AllUsers = () => {
 
   const fetchLessons = () => {
     setLoading(true);
-    fetch(`http://localhost:5000/users/all`)
+    fetch(`http://localhost:5000/users/all`,{
+              method: "GET", 
+              headers: {
+                "Content-Type": "application/json", 
+                Authorization: Cookies.get('token') ,
+              },
+    })
       .then((response) => response.json())
       .then((data) => {
         setUsers(data.result);
@@ -125,7 +119,7 @@ const AllUsers = () => {
 
 
   if (loading) {
-    return <div>Loading...</div>;
+    return  <Spinner></Spinner> ;
   }
 
   return (

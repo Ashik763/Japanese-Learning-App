@@ -4,26 +4,32 @@ import LessonCard  from './LessonCard';
 import { JapanesePattern } from './JapanesePattern';
 import { useEffect, useState } from 'react';
 import Cookies from 'js-cookie';
+import Spinner from '../Shared/Spinner/Spinner';
 
 export default  function AllLessons() {
+  const [loading,setLoading] = useState(true);
 
  
 
   const [lessons, setLessons] = useState([]);
   useEffect(() => {
     fetch("http://localhost:5000/lessons/all", {
-      method: "GET", // Specify the HTTP method if necessary
+      method: "GET", 
       headers: {
-        "Content-Type": "application/json", // Ensure proper content type
-        Authorization: Cookies.get('token') , // Add the token
+        "Content-Type": "application/json", 
+        Authorization: Cookies.get('token') ,
       },
     })
       .then((res) => res.json())
       .then((data) => {
-        
+        setLoading(false);
         setLessons(data);
       });
   }, []);
+
+  if(loading){
+    return <Spinner></Spinner>
+  }
 
   return (
     <div className="relative min-h-screen overflow-hidden bg-gradient-to-b from-white to-sky-50">

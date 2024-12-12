@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { toast } from "react-toastify";
+import Cookies from 'js-cookie'
 
 const CreateALesson = () => {
   const [lessonName, setLessonName] = useState("");
@@ -12,7 +13,8 @@ const CreateALesson = () => {
         fetch('http://localhost:5000/lessons/create-a-lesson', {
             method: 'POST',
             headers: {
-              'Content-Type': 'application/json', // Indicate JSON content
+              'Content-Type': 'application/json',
+                Authorization: Cookies.get('token') ,
             },
             body: JSON.stringify({
               name: lessonName,

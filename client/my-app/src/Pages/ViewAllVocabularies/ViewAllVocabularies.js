@@ -4,6 +4,8 @@ import { CiEdit } from "react-icons/ci";
 import ReactModal from "react-modal";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import Cookies from 'js-cookie'
+import Spinner from "../Shared/Spinner/Spinner";
 
 const customStyles = {
   content: {
@@ -64,6 +66,8 @@ const ViewAllVocabularies = () => {
         method: "PATCH",
         headers: {
           "Content-type": "application/json; charset=UTF-8",
+           Authorization: Cookies.get('token') ,
+          
         },
         body: JSON.stringify({
           word,
@@ -89,7 +93,13 @@ const ViewAllVocabularies = () => {
 
   const fetchLessons = () => {
     setLoading(true);
-    fetch(`http://localhost:5000/words/all`)
+    fetch(`http://localhost:5000/words/all`, {
+        method: "GET", 
+        headers: {
+        "Content-Type": "application/json", 
+        Authorization: Cookies.get('token') ,
+        },
+    })
       .then((response) => response.json())
       .then((data) => {
         setWords(data.result);
@@ -104,6 +114,10 @@ const ViewAllVocabularies = () => {
   const handleDelete = (_id) => {
     fetch(`http://localhost:5000/words/delete/${_id}`, {
       method: "DELETE",
+      headers: {
+        "Content-Type": "application/json", 
+        Authorization: Cookies.get('token') ,
+      },
     })
       .then((res) => res.json())
       .then(() => {
@@ -122,33 +136,13 @@ const ViewAllVocabularies = () => {
     // subtitle.style.color = '#f00';
   }
 
-//   const handleUpdateLesson = (updatedLesson) => {
-//     fetch(`http://localhost:5000/lessons/${updatedLesson.id}`, {
-//       method: "PUT",
-//       headers: {
-//         "Content-Type": "application/json",
-//       },
-//       body: JSON.stringify(updatedLesson),
-//     })
-//       .then((res) => res.json())
-//       .then(() => {
-//         fetchLessons();
-        
-//         toast.success("Lesson updated successfully");
-//       })
-//       .catch((error) => {
-//         console.error("Error updating lesson:", error);
-//         toast.error("Failed to update lesson");
-//       });
-//   };
-
   if (loading) {
-    return <div>Loading...</div>;
+    return <Spinner></Spinner> ;
   }
 
   return (
     <div className="border relative  w-full mx-auto my-auto p-4">
-      <h1 className="text-2xl font-bold mb-4">All Lessons</h1>
+      {/* <h1 className="text-2xl font-bold mb-4 text-center ">All Lessons</h1> */}
       <table className=" absolute right-2 top-2 w-full md:w-4/5 border  bg-white">
         <thead>
           <tr>
@@ -165,18 +159,18 @@ const ViewAllVocabularies = () => {
         <tbody>
           {words.map((word) => (
             <tr key={word._id}>
-              <td className="py-2 px-4 border-b">{word.word}</td>
-              <td className="py-2 px-4 border-b">{word.meaning}</td>
-              <td className="py-2 px-4 border-b">{word.pronunciation}</td>
-              <td className="py-2 px-4 border-b">{word.whenToSay || "When to say"}</td>
-              <td className="py-2 px-4 border-b">{word.lessonNo || "Lesson No"}</td>
-              <td className="py-2 px-4 border-b">
-                <button onClick={() => openModal(word)} className="text-blue-500">
+              <td className="py-2 px-4 border-b text-center">{word.word}</td>
+              <td className="py-2 px-4 border-b text-center">{word.meaning}</td>
+              <td className="py-2 px-4 border-b text-center">{word.pronunciation}</td>
+              <td className="py-2 px-4 border-b text-center">{word.whenToSay || "When to say"}</td>
+              <td className="py-2 px-4 border-b text-center">{word.lessonNo || "Lesson No"}</td>
+              <td className="py-2 px-4 border-b text-center">
+                <button onClick={() => openModal(word)} className="text-blue-500 text-center">
                   <CiEdit size={20} />
                 </button>
               </td>
               <td className="py-2 px-4 border-b">
-                <button onClick={() => handleDelete(word._id)} className="text-red-500">
+                <button onClick={() => handleDelete(word._id)} className="text-red-500 text-center">
                   <AiOutlineDelete size={20} />
                 </button>
               </td>

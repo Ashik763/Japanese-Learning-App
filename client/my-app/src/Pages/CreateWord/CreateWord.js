@@ -1,5 +1,6 @@
 import React, { useContext, useState } from "react";
 import { toast } from "react-toastify";
+import Cookies from 'js-cookie'
 import { AuthContext } from "../../Contexts/AuthProvider";
 
 const CreateWord = () => {
@@ -21,6 +22,7 @@ const CreateWord = () => {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json', 
+                 Authorization: Cookies.get('token') ,
             },
             body: JSON.stringify({
               word, pronunciation, meaning, whenToSay, lessonNo, createdBy:user.name
