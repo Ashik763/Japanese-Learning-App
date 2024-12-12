@@ -1,0 +1,13 @@
+
+.banner-img1{
+   border-radius: 3%;
+}
+
+.banner-img2{
+    border-radius: 3%;
+}
+
+.bg-img{
+    z-index: -5;
+    right: 0;
+}
